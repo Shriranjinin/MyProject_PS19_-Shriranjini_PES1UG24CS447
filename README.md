@@ -208,36 +208,7 @@ Subscriber dietary information is protected using:
 
 These requirements are defined under **NFR-002**.
 
-## 11. Project Deliverables
-
-The project is organized into four folders:
-
-### Folder 1 – Requirements Engineering
-
-- Functional Requirements
-- Non-Functional Requirements
-- Requirements Traceability Matrix (RTM)
-
-### Folder 2 – Architecture
-
-- UML Component Diagram
-- Layered Architecture
-- Component interfaces and dependencies
-
-### Folder 3 – GitHub and Jira
-
-- GitHub repository
-- Jira project
-- Epic
-- Stories / work items
-- Tasks and project tracking evidence
-
-### Folder 4 – Software Documentation
-
-- Software Requirements Specification (SRS)
-- Work Breakdown Structure (WBS)
-
-## 12. System Workflow
+## 11. System Workflow
 
 
 Subscriber
