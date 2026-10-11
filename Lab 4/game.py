@@ -1,3 +1,4 @@
+
 from board import Board
 from ai import AI
 
@@ -6,17 +7,19 @@ class Battleship:
     def __init__(self):
         self.player = Board()
         self.enemy = Board()
-        self.ai = AI()
+        self.ai = AI(Board.SIZE)
         self._setup()
 
     def _setup(self):
         self.player.place_ship({(1, 1), (1, 2), (1, 3)})
+        self.player.place_ship({(4, 4), (4, 5)})
+
         self.enemy.place_ship({(2, 2), (2, 3), (2, 4)})
+        self.enemy.place_ship({(4, 0), (5, 0)})
 
     def show(self):
-        print("\nYour shots are coordinates like 2,3.")
-        remaining = len(self.enemy.ships - self.enemy.shots)
-        print("Enemy ship cells remaining:", remaining)
+        print("\nYour shots are coordinates like 2,3 (or q to quit).")
+        print("Enemy ship cells remaining:", self.enemy.remaining_cells())
 
     def run(self):
         print("Battleship")
@@ -31,18 +34,21 @@ class Battleship:
 
             try:
                 parts = raw.split(",")
+
                 if len(parts) != 2:
                     raise ValueError
 
-                r, c = map(int, parts)
-                pos = (r - 1, c - 1)
+                row, col = map(int, parts)
+                pos = (row - 1, col - 1)
 
             except ValueError:
                 print("Invalid input. Enter coordinates like 2,3.")
                 continue
 
-            if not (0 <= pos[0] < Board.SIZE and
-                    0 <= pos[1] < Board.SIZE):
+            if not (
+                0 <= pos[0] < Board.SIZE
+                and 0 <= pos[1] < Board.SIZE
+            ):
                 print("Outside board. Choose coordinates from 1 to 6.")
                 continue
 
@@ -50,8 +56,12 @@ class Battleship:
                 print("Already fired there. Choose another cell.")
                 continue
 
-            if self.enemy.fire(pos):
+            hit, sunk_ship = self.enemy.fire(pos)
+
+            if hit:
                 print("HIT!")
+                if sunk_ship is not None:
+                    print("You sank an enemy ship!")
             else:
                 print("MISS!")
 
@@ -59,25 +69,35 @@ class Battleship:
                 print("You sank the enemy fleet. You win!")
                 return
 
-            ai_pos = self.ai.choose()
+            ai_move = self.ai.choose()
+
+            if ai_move is None:
+                print("AI has no untried cells remaining.")
+                return
 
             try:
-                ar, ac = map(int, ai_pos.split(","))
-                player_pos = (ar - 1, ac - 1)
-
-                if not (0 <= player_pos[0] < Board.SIZE and
-                        0 <= player_pos[1] < Board.SIZE):
-                    print("AI generated an invalid move.")
-                    continue
-
+                ai_row, ai_col = map(int, ai_move.split(","))
+                player_pos = (ai_row - 1, ai_col - 1)
             except (ValueError, AttributeError):
                 print("AI generated an invalid move.")
-                continue
+                return
 
-            print("AI fired at", ai_pos)
+            if not (
+                0 <= player_pos[0] < Board.SIZE
+                and 0 <= player_pos[1] < Board.SIZE
+            ):
+                print("AI generated an invalid move.")
+                return
 
-            if self.player.fire(player_pos):
+            print("AI fired at", ai_move)
+
+            ai_hit, ai_sunk_ship = self.player.fire(player_pos)
+            self.ai.record_result(player_pos, ai_hit)
+
+            if ai_hit:
                 print("AI scored a hit!")
+                if ai_sunk_ship is not None:
+                    print("AI sank one of your ships!")
             else:
                 print("AI missed.")
 
