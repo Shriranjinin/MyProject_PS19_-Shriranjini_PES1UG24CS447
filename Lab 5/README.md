@@ -32,9 +32,14 @@ The code works, but only just. It has quality, style and security problems of th
 
 4. **Document the issues** in `issues.md` using this table (at least 4 rows, high and medium severity first):
 
-   | Issue | Type | Line(s) | Description | Fix Approach |
-   |-------|------|---------|-------------|--------------|
-   | ... | ... | ... | ... | ... |
+Issue	Type	Line(s)	Description	Fix Approach
+SQL injection	Security	9	SQL query used string interpolation, creating a potential SQL injection vulnerability.	Replaced string interpolation with parameterized SQL queries.
+Unsafe shell execution	Security	24	shell=True could allow command injection through unsafe input.	Replaced subprocess execution with print().
+Bare exception	Code quality	30	A bare except could hide unexpected errors.	Specified the appropriate exception type.
+Missing docstrings	Maintainability	1, 8, 13, 17, 23, 27, 34	Module and functions lacked documentation.	Added descriptive module and function docstrings.
+Invalid function naming	Code quality	8, 13, 17, 23, 27	Function names did not follow the snake_case naming convention.	Renamed functions using snake_case.
+Long lines	Code style	5, 9, 14, 29	Lines exceeded the recommended character limit.	Split long statements across multiple lines.
+Unspecified file encoding	Code quality	18	File opening did not explicitly specify an encoding.	Specified UTF-8 encoding.
 
 5. **Fix the code.** Fix at least 4 of the issues you documented, then rerun all three tools to confirm they are gone. Repeat until you are satisfied. The program should still do its job when you are done.
 
